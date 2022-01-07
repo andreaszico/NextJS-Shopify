@@ -8,6 +8,23 @@ export interface ProductPrice {
   currencyCode: "USD" | "EUR" | string;
 }
 
+export interface ProductOptionsValues {
+  label: string;
+  hexColor?: string;
+}
+
+export interface ProductOptions {
+  id: string;
+  displayName: string;
+  values: ProductOptionsValues[];
+}
+
+export interface ProductVariant {
+  id: string
+  name: string
+  options: ProductOptions[]
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -16,4 +33,6 @@ export interface Product {
   path: string;
   images: ProductImage[];
   price: ProductPrice;
+  options: ProductOptions[];
+  variants: ProductVariant[]
 }
