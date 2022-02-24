@@ -13,8 +13,10 @@ const Usernav: FC = () => {
           <Cart onClick={openSidebar}/>
         </li>
         <li className={style.item}>
-          <Link href="/wishlist">
-            <Heart />
+          <Link href={'/wishlist'}>
+            <a>
+              <Heart />
+            </a>
           </Link>
         </li>
       </ul>
