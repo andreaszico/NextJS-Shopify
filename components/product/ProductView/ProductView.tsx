@@ -5,22 +5,32 @@ import { Container, Button } from "@components/ui";
 import Image from "next/image";
 import { Product } from "@common/types/product";
 import { ProductSlider, Swatch } from "..";
+import { Choices, getVariants } from "../helpers";
+import { useUI } from "@components/ui/context";
+import useAddItem from '@framework/cart/use-add-item';
 
 interface Props {
   product: Product;
 }
 
-type AvailableChoices = "color" | "size" | string;
-
-type Choices = {
-  [P in AvailableChoices]: string;
-};
-
 const ProductView: FC<Props> = ({ product }) => {
   const [choices, setChoices] = useState<Choices>({});
+  const variant = getVariants(product, choices);
+  const { openSidebar } = useUI();
+  const addItem = useAddItem();
 
-  console.log(choices);
-
+  const addToCart = () => {
+    try {
+      const item = {
+        productId: String(product.id),
+        variantId: variant?.id,
+        variantOptions: variant?.options,
+      };
+      const output = addItem(item);
+      alert(JSON.stringify  (output))
+      openSidebar()
+    } catch (error) {}
+  };
   return (
     <Container>
       <div className={cn(s.root, "fit", "mb-5")}>
@@ -54,21 +64,26 @@ const ProductView: FC<Props> = ({ product }) => {
               <div key={option.id} className="pb-4">
                 <h2 className="uppercase font-medium">{option.displayName}</h2>
                 <div className="flex flex-row py-4">
-                  {option.values.map((ov) => (
-                    <Swatch
-                      key={`${option.id}-${ov.label}`}
-                      label={ov.label}
-                      color={ov.hexColor}
-                      variant={option.displayName}
-                      onClick={() => {
-                        setChoices({
-                          ...choices,
-                          [option.displayName.toLocaleLowerCase()]:
-                            ov.label.toLocaleLowerCase(),
-                        });
-                      }}
-                    />
-                  ))}
+                  {option.values.map((ov) => {
+                    const activeChoice =
+                      choices[option.displayName.toLocaleLowerCase()];
+                    return (
+                      <Swatch
+                        key={`${option.id}-${ov.label}`}
+                        label={ov.label}
+                        color={ov.hexColor}
+                        active={ov.label.toLocaleLowerCase() === activeChoice}
+                        variant={option.displayName}
+                        onClick={() => {
+                          setChoices({
+                            ...choices,
+                            [option.displayName.toLocaleLowerCase()]:
+                              ov.label.toLocaleLowerCase(),
+                          });
+                        }}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -77,7 +92,7 @@ const ProductView: FC<Props> = ({ product }) => {
             </div>
           </section>
           <div>
-            <Button onClick={() => alert("Adding to cart")}>Add to Cart</Button>
+            <Button onClick={() => addToCart()}>Add to Cart</Button>
           </div>
         </div>
       </div>
