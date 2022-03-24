@@ -4,7 +4,7 @@ const {
 
 module.exports = withFrameworkConfig({
   framework: {
-    name: "shopify_local"
+    name: process.env.NEXT_PUBLIC_FRAMEWORK
   },
   reactStrictMode: true,
   i18n: {

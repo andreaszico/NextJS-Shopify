@@ -1,10 +1,11 @@
-export type Variables = { [key: string]: string | undefined };
+import { ApiHooks } from "./hooks";
 
 export type ApiFetcherOptions = {
-  url: string;
   query: string;
   variables?: Variables;
 };
+
+export type Variables = { [key: string]: string | undefined | any};
 
 export type ApiFetcherResults<T> = {
   data: T;
@@ -12,22 +13,15 @@ export type ApiFetcherResults<T> = {
 
 export type ApiFetcher<T = any> = (
   options: ApiFetcherOptions
- ) => Promise<ApiFetcherResults<T>>
+) => Promise<ApiFetcherResults<T>>;
 
 export interface ApiConfig {
-  apiUrl: string;
-  fetch: ApiFetcher;
+  fetch<T>(options: ApiFetcherOptions): Promise<ApiFetcherResults<T>>;
+  checkoutCookie: string;
 }
-
-export interface ApiHooks {
-  cart: {
-    useAddItem: any;
-  };
-}
-
 
 export interface ApiProviderContext {
-  hooks: ApiHooks,
-  fetcher: ApiFetcher
+  hooks: ApiHooks;
+  fetcher: ApiFetcher;
+  checkoutCookie: string;
 }
-
